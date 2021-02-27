@@ -1,0 +1,24 @@
+{
+  "name": "three.js-exercises",
+  "version": "1.0.0",
+  "description": "```console\r $ node server\r ```\r then localhost:3000 to view all the projects",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jnyuu/three.js-exercises.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jnyuu/three.js-exercises/issues"
+  },
+  "homepage": "https://github.com/jnyuu/three.js-exercises#readme"
+}
