@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="../../jquery.js"></script>
+    <script type="text/javascript" src="../../three.js"></script>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #display {
+            color: black;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-size: 40px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>cw 2 - global light</h1>
+    <label for="">intensity<input id="intensity" type="range" min="1" max="100" value="1"></label>
+
+    <div id="root"></div>
+
+
+</body>
+<script>
+    $(document).ready(function () {
+
+
+        $('#intensity').on('input', function () {
+            light.intensity = $(this).val() * 0.1;;
+
+        });
+        var materials = [];
+
+        materials.push(new THREE.MeshPhongMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load('../../mats/2.jpg')
+
+        }));
+        materials.push(new THREE.MeshPhongMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load('../../mats/2.jpg')
+
+        }));
+        materials.push(new THREE.MeshPhongMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load('../../mats/1.jpg')
+
+        }));
+        materials.push(new THREE.MeshPhongMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load('../../mats/3.jpg')
+        }));
+        materials.push(new THREE.MeshPhongMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load('../../mats/2.jpg')
+        }));
+        materials.push(new THREE.MeshPhongMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load('../../mats/2.jpg')
+        }));
+
+
+        var scene = new THREE.Scene();
+        var axes = new THREE.AxesHelper(1000);
+        scene.add(axes);
+        var geometry = new THREE.BoxGeometry(100, 100, 100);
+
+        var cube = new THREE.Mesh(geometry, materials);
+        scene.add(cube);
+
+
+
+        var geometry = new THREE.PlaneGeometry(700, 700, 5);
+        var plane = new THREE.Mesh(geometry, materials);
+        plane.rotation.x = Math.PI / 2;
+        plane.position
+            .y = -50;
+
+        scene.add(plane);
+
+        var camera = new THREE.PerspectiveCamera(
+            45, // kąt patrzenia kamery (FOV - field of view)
+            window.innerWidth / window
+            .innerHeight, // proporcje widoku, powinny odpowiadać proporcjom naszego ekranu przeglądarki
+            0.1, // minimalna renderowana odległość
+            10000 // maksymalna renderowana odległość od kamery
+        );
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0xffffff);
+        renderer.setSize(
+            window.innerWidth, window.innerHeight);
+        $("#root").append(renderer.domElement);
+        camera.position.set(500, 300, 500);
+        camera.updateProjectionMatrix();
+        camera.lookAt(scene.position);
+
+        var light = new THREE.AmbientLight(0xffffff, 10);
+        scene.add(light);
+
+        function render() {
+
+            cube.rotation.y += 0.01;
+
+
+            requestAnimationFrame(render);
+
+
+            
+
+
+            renderer.render(scene, camera);
+        }
+        render();
+    })
+</script>
+
+</html>

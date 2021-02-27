@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="../../jquery.js"></script>
+    <script type="text/javascript" src="../../three.js"></script>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        h1 {
+            position: absolute;
+        }
+
+        button {
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>cw 6 - camera rotating animation</h1>
+    <div id="root"></div>
+</body>
+<script>
+    $(document).ready(function () {
+        let angle = 0;
+
+
+        var materials = [];
+
+        materials.push(new THREE.MeshBasicMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load('../../mats/2.jpg')
+
+        }));
+        materials.push(new THREE.MeshBasicMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load('../../mats/2.jpg')
+
+        }));
+        materials.push(new THREE.MeshBasicMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load('../../mats/1.jpg')
+
+        }));
+        materials.push(new THREE.MeshBasicMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load('../../mats/3.jpg')
+        }));
+        materials.push(new THREE.MeshBasicMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load('../../mats/2.jpg')
+        }));
+        materials.push(new THREE.MeshBasicMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load('../../mats/2.jpg')
+        }));
+        console.log(materials);
+
+
+        var geometry = new THREE.BoxGeometry(100, 100, 100);
+        var scene = new THREE.Scene();
+        var cube = new THREE.Mesh(geometry, materials);
+        var axes = new THREE.AxesHelper(1000)
+        scene.add(axes)
+
+        scene.add(cube);
+        console.log(cube);
+
+
+        var camera = new THREE.PerspectiveCamera(
+            75, // kąt patrzenia kamery (FOV - field of view)
+            window.innerWidth / window
+            .innerHeight, // proporcje widoku, powinny odpowiadać proporcjom naszego ekranu przeglądarki
+            0.1, // minimalna renderowana odległość
+            10000 // maksymalna renderowana odległość od kamery
+        );
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0xffffff);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        $("#root").append(renderer.domElement);
+        camera.position.set(200, 50, 200)
+        camera.updateProjectionMatrix();
+
+        function add() {
+            camera.position.z = 200 * Math.cos(angle);
+            camera.position.x = 200 * Math.sin(angle);
+            camera.lookAt(scene.position)
+            angle += 0.04
+            console.log(angle);
+        }
+        setInterval(add, 10)
+
+        function render() {
+
+            cube.rotation.y += 0.01;
+            camera.lookAt(scene.position);
+
+            requestAnimationFrame(render);
+
+            
+
+            renderer.render(scene, camera);
+        }
+        render();
+    })
+</script>
+
+</html>

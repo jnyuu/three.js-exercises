@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="../../jquery.js"></script>
+    <script type="text/javascript" src="./three_97.js"></script>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #display {
+            color: black;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-size: 40px;
+            text-align: center;
+        }
+
+        #buttons {
+            position: absolute;
+            top: 0;
+            left: 100px;
+        }
+
+        .btn {
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>cw 1 - testing out model animations</h1>
+    <div id="buttons">
+        <button id="add">add</button>
+        <button id="remove">remove</button>
+    </div>
+    <div id="root"></div>
+</body>
+<script>
+    $(document).ready(function () {
+        let angle = 0;
+        let currAnimation = null;
+        var loader = new THREE.JSONLoader();
+        let mixer = null;
+        let mixer2 = null;
+
+
+        var modelMaterial = new THREE.MeshBasicMaterial({
+            map: new THREE.TextureLoader().load("boba/prototype_fett.png"),
+            morphTargets: true // ta własność odpowiada za możliwość animowania materiału modelu
+        });
+
+        loader.load('boba/tris.js', function (geometry) {
+            meshModel = new THREE.Mesh(geometry, modelMaterial)
+            meshModel.name = "boba";
+            meshModel.rotation.y = 0; // ustaw obrót modelu
+            meshModel.position.y = 50; // ustaw pozycje modelu
+            meshModel.scale.set(2, 2, 2); // ustaw skalę modelu
+            scene.add(meshModel);
+            for (var i = 0; i < geometry.animations.length; i++) {
+                let btn = document.createElement('button');
+                $(btn).addClass("songSize")
+                    .html(geometry.animations[i].name)
+                    .appendTo($("#buttons"))
+                    .click(launchAnimation)
+            }
+            mixer = new THREE.AnimationMixer(meshModel)
+        });
+        var clock = new THREE.Clock();
+
+        function launchAnimation() {
+            if (currAnimation !== null) {
+                mixer.clipAction(currAnimation).stop()
+            }
+            mixer.clipAction($(this).html()).play()
+            currAnimation = $(this).html()
+        }
+
+
+
+        var model2Material = new THREE.MeshBasicMaterial({
+            map: new THREE.TextureLoader().load("crakhor/crakhor.png"),
+            morphTargets: true // ta własność odpowiada za możliwość animowania materiału modelu
+        });
+        var loader2 = new THREE.JSONLoader();
+
+        loader2.load('crakhor/tris.js', function (geometry) {
+            meshModel2 = new THREE.Mesh(geometry, model2Material)
+            meshModel2.name = "crakhor";
+            meshModel2.rotation.y = 0; // ustaw obrót modelu
+            meshModel2.position.y = 50; // ustaw pozycje modelu
+            meshModel2.scale.set(2, 2, 2); // ustaw skalę modelu
+            // scene.add(meshModel2);
+
+            mixer2 = new THREE.AnimationMixer(meshModel2)
+            mixer2.clipAction("run").play()
+
+        });
+        let clonePos = 20;
+        $("#add").click(() => {
+            let clone = meshModel2.clone();
+            clone.position.x = clonePos;
+            clone.position.z = clonePos;
+            container.add(clone);
+            clonePos += 20;
+        })
+
+        $("#remove").click(() => {
+
+        })
+
+
+
+
+
+        var scene = new THREE.Scene();
+        var axes = new THREE.AxesHelper(1000);
+        scene.add(axes);
+        let container = new THREE.Object3D();
+        scene.add(container);
+
+        var material = new THREE.MeshBasicMaterial({
+            color: 0x000000,
+            side: THREE.DoubleSide,
+            wireframe: true
+        });
+        var geometry = new THREE.PlaneGeometry(700, 700, 50, 50);
+        var plane = new THREE.Mesh(geometry, material);
+        plane.rotation.x = Math.PI / 2;
+
+
+        scene.add(plane);
+
+        var camera = new THREE.PerspectiveCamera(
+            45, // kąt patrzenia kamery (FOV - field of view)
+            window.innerWidth / window
+            .innerHeight, // proporcje widoku, powinny odpowiadać proporcjom naszego ekranu przeglądarki
+            0.1, // minimalna renderowana odległość
+            10000 // maksymalna renderowana odległość od kamery
+        );
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0xffffff);
+        renderer.setSize(
+            window.innerWidth, window.innerHeight);
+        $("#root").append(renderer.domElement);
+        camera.updateProjectionMatrix();
+        camera.lookAt(scene.position);
+        camera.position.set(300, 200, 300);
+
+        var light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(1, 1, 1);
+        scene.add(light);
+
+        function render() {
+            camera.lookAt(scene.position);
+
+            angle += 0.03;
+            camera.position.z = 300 * Math.cos(angle);
+            camera.position.x = 200 * Math.sin(angle);
+
+            var delta = clock.getDelta();
+            if (mixer) mixer.update(delta)
+            if (mixer2) mixer2.update(delta)
+
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+        }
+        render();
+    })
+</script>
+
+</html>

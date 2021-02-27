@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="../../jquery.js"></script>
+    <script type="text/javascript" src="../../three.js"></script>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+
+        }
+
+        h1 {
+            position: absolute;
+        }
+
+        button {
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>cw 4 - up and down camera animation</h1>
+    <div id="root"></div>
+</body>
+<script>
+    $(document).ready(function () {
+        let angle = 0;
+
+
+        function add() {
+            camera.position.y = Math.sin(angle) * 300
+            angle += 0.1
+            console.log(angle);
+
+        }
+        setInterval(add, 10)
+
+        var scene = new THREE.Scene();
+        var axes = new THREE.AxesHelper(1000)
+        scene.add(axes)
+        var geometry = new THREE.BoxGeometry(100, 100, 100);
+        var material = new THREE.MeshBasicMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load("../../mats/mesh.jpg"),
+            transparent: true,
+            opacity: 0.8,
+
+        })
+        var cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+
+        var camera = new THREE.PerspectiveCamera(
+            45, // kąt patrzenia kamery (FOV - field of view)
+            window.innerWidth / window
+            .innerHeight, // proporcje widoku, powinny odpowiadać proporcjom naszego ekranu przeglądarki
+            0.1, // minimalna renderowana odległość
+            10000 // maksymalna renderowana odległość od kamery
+        );
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0xffffff);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        $("#root").append(renderer.domElement);
+        camera.position.set(200, 0, 200)
+        camera.updateProjectionMatrix();
+
+        function render() {
+
+            cube.rotation.y += 0.01;
+            camera.lookAt(scene.position);
+
+            //w tym miejscu ustalamy wszelkie zmiany w projekcie (obrót, skalę, położenie obiektów)
+            //np zmieniająca się wartość rotacji obiektu
+
+            //mesh.rotation.y += 0.01;
+
+            //wykonywanie funkcji bez końca, ok 60 fps jeśli pozwala na to wydajność maszyny
+
+            requestAnimationFrame(render);
+
+            // potwierdzenie w konsoli, że render się wykonuje
+
+            
+
+            //ciągłe renderowanie / wyświetlanie widoku sceny naszą kamerą
+
+            renderer.render(scene, camera);
+        }
+        render();
+    })
+</script>
+
+</html>
